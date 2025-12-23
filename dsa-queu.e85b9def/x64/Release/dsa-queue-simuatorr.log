@@ -1,0 +1,13 @@
+﻿  traficsim.cpp
+C:\Users\netra\source\repos\dsa-queue-simulator-final\dsa-queue-simuatorr\traficsim.cpp(308,19): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\netra\source\repos\dsa-queue-simulator-final\dsa-queue-simuatorr\traficsim.cpp(447,25): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\netra\source\repos\dsa-queue-simulator-final\dsa-queue-simuatorr\traficsim.cpp(463,29): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\netra\source\repos\dsa-queue-simulator-final\dsa-queue-simuatorr\traficsim.cpp(475,29): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\netra\source\repos\dsa-queue-simulator-final\dsa-queue-simuatorr\traficsim.cpp(487,29): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\netra\source\repos\dsa-queue-simulator-final\dsa-queue-simuatorr\traficsim.cpp(500,29): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+  Generating code
+  264 of 267 functions (98.9%) were compiled, the rest were copied from previous compilation.
+    263 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  dsa-queue-simuatorr.vcxproj -> C:\Users\netra\source\repos\dsa-queue-simulator-final\dsa-queue-simuatorr\x64\Release\dsa-queue-simuatorr.exe
