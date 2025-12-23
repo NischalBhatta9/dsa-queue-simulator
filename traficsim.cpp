@@ -94,3 +94,51 @@ public:
         this->carColor = carColor;
         this->trafficLight = trafficLight;
     }
+    void addCar(const Car& car) {
+        // Check if there is enough space to add the car without collision
+        Car newCar = car;
+        newCar.shape.setFillColor(carColor);
+
+        // Check for collisions with existing cars
+        for (const auto& existingCar : cars) {
+            if (newCar.isColliding(existingCar)) {
+                // Don't add car if it would collide
+                return;
+            }
+        }
+
+        cars.push_back(newCar);
+    }
+
+    void updateCars() {
+        const float stopThreshold = 10.0f;  // Distance threshold before stopping
+        const float collisionBuffer = 8.0f; // Minimum distance between cars
+
+        for (auto it = cars.begin(); it != cars.end();) {
+            bool shouldMove = true;
+            sf::Vector2f carPos = it->shape.getPosition();
+            bool inRectangularArea = (carPos.x >= 350 && carPos.x <= 450 &&
+                carPos.y >= 250 && carPos.y <= 350);
+
+            // Check collision with other cars in the same lane
+            for (auto& otherCar : cars) {
+                // Skip self comparison
+                if (&otherCar == &(*it)) {
+                    continue;
+                }
+
+                // Calculate future position
+                sf::Vector2f futurePos = carPos;
+                futurePos.x += it->speedX;
+                futurePos.y += it->speedY;
+
+                // Temporary car at future position to check collision
+                Car futureCar = *it;
+                futureCar.shape.setPosition(futurePos);
+
+                // Check if future position would cause collision
+                if (futureCar.isColliding(otherCar)) {
+                    shouldMove = false;
+                    it->stopped = true;
+                    break;
+                }
