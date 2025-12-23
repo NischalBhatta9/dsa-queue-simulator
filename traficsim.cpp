@@ -22,6 +22,8 @@ public:
         shape.setSize(sf::Vector2f(width, height));
         shape.setPosition(x, y);
         shape.setFillColor(colors[state]);
+
+        bool isRed() { return state == 0; }
     }
 
 };
@@ -54,3 +56,41 @@ public:
     }
 
     void move() { shape.move(speedX, speedY); }
+    bool isOutOfBounds(float windowWidth, float windowHeight) {
+        sf::Vector2f pos = shape.getPosition();
+        return (pos.x < 0 || pos.x > windowWidth || pos.y < 0 ||
+            pos.y > windowHeight);
+    }
+
+    sf::FloatRect getCollisionBounds() const {
+        // Get the car's bounding box
+        return shape.getGlobalBounds();
+    }
+
+    bool isColliding(const Car& other) const {
+        return getCollisionBounds().intersects(other.getCollisionBounds());
+    }
+};
+
+class Lane {
+public:
+    sf::RectangleShape shape;
+    sf::Color color;
+    sf::Color carColor;
+    TrafficLight* trafficLight;
+    std::vector<Car> cars;
+    bool ignoreTrafficLight;
+    bool isPriority;
+    int waitingVehicles;
+
+    Lane(float x, float y, float width, float height, sf::Color color,
+        sf::Color carColor, TrafficLight* trafficLight,
+        bool ignoreTrafficLight = false, bool isPriority = false)
+        : ignoreTrafficLight(ignoreTrafficLight), isPriority(isPriority),
+        waitingVehicles(0) {
+        shape.setSize(sf::Vector2f(width, height));
+        shape.setPosition(x, y);
+        shape.setFillColor(color);
+        this->carColor = carColor;
+        this->trafficLight = trafficLight;
+    }
