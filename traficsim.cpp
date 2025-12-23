@@ -25,3 +25,32 @@ public:
     }
 
 };
+class Road {
+public:
+    sf::RectangleShape shape;
+
+    Road(float x, float y, float width, float height) {
+        shape.setSize(sf::Vector2f(width, height));
+        shape.setPosition(x, y);
+        shape.setFillColor(sf::Color(50, 50, 50));
+    }
+};
+class Car {
+public:
+    sf::RectangleShape shape;
+    float speedX, speedY;
+    bool isStraight;
+    bool isRight;
+    bool hasTurned;
+    bool stopped;
+
+    Car(float x, float y, float width, float height, float speedX, float speedY,
+        bool isStraight, bool isRight, bool hasTurned = false)
+        : speedX(speedX), speedY(speedY), isStraight(isStraight),
+        isRight(isRight), hasTurned(hasTurned), stopped(false) {
+        shape.setSize(sf::Vector2f(width, height));
+        shape.setPosition(x, y);
+        shape.setFillColor(sf::Color::Blue);
+    }
+
+    void move() { shape.move(speedX, speedY); }
