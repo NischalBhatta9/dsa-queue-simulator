@@ -23,7 +23,7 @@ public:
         shape.setPosition(x, y);
         shape.setFillColor(colors[state]);
 
-        bool isRed() { return state == 0; }
+        bool isRed() { return state == 0 ; }
     }
 
 };
@@ -211,4 +211,71 @@ public:
                             shouldMove = false;
                     }
                 }
+            } 
+            if (shouldMove) {
+                it->move();
+                it->stopped = false;
             }
+            else {
+                it->stopped = true;
+            }
+
+            if (it->isOutOfBounds(720, 600)) {
+                it = cars.erase(it);
+            }
+            else if (carPos.x >= 360 && carPos.x <= 380 && carPos.y >= 260 &&
+                carPos.y <= 280) {
+                it->speedX = 0.0f;
+                it->speedY = -0.5f;
+                ++it; // Advance the iterator
+            }
+            else if (carPos.x >= 420 && carPos.x <= 440 && carPos.y >= 260 &&
+                carPos.y <= 280) {
+                it->speedY = 0.0f;
+                it->speedX = 0.5f;
+                ++it; // Advance the iterator
+            }
+            else if (carPos.x == 441 && carPos.y >= 320 && carPos.y <= 340) {
+                it->speedX = 0.0f;
+                it->speedY = 0.5f;
+                ++it; // Advance the iterator
+            }
+            else if (carPos.y == 341 && carPos.x >= 360 && carPos.x <= 380) {
+                it->speedY = 0.0f;
+                it->speedX = -0.5f;
+                ++it; // Advance the iterator
+            }
+            else if (it->isRight && !it->hasTurned && carPos.x >= 410 &&
+                carPos.x <= 430 && carPos.y >= 310 && carPos.y <= 330 &&
+                it->speedY > 0) {
+                it->speedY = 0.0f;
+                it->speedX = -0.5f;
+                it->hasTurned = true;
+                ++it; // Advance the iterator
+            }
+            else if (it->isRight && !it->hasTurned && carPos.x >= 390 &&
+                carPos.x <= 410 && carPos.y == 291 && it->speedY < 0) {
+                it->speedY = 0.0f;
+                it->speedX = 0.5f;
+                it->hasTurned = true;
+                ++it; // Advance the iterator
+            }
+            else if (it->isRight && !it->hasTurned && carPos.x == 410 &&
+                carPos.y >= 290 && carPos.y <= 310 && it->speedX > 0) {
+                it->speedX = 0.0f;
+                it->speedY = 0.5f;
+                it->hasTurned = true;
+                ++it; // Advance the iterator
+            }
+            else if (it->isRight && !it->hasTurned && carPos.x == 391 &&
+                carPos.y >= 310 && carPos.y <= 330 && it->speedX < 0) {
+                it->speedX = 0.0f;
+                it->speedY = -0.5f;
+                it->hasTurned = true;
+                ++it; // Advance the iterator
+            }
+            else {
+                ++it;
+            }
+        }
+  }
