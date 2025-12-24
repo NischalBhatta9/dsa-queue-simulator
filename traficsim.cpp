@@ -279,3 +279,44 @@ public:
             }
         }
   }
+
+  void updateWaitingCount() {
+      waitingVehicles = 0;
+      for (auto& car : cars) {
+          if (car.stopped) {
+              waitingVehicles++;
+          }
+      }
+  }
+
+  void drawCars(sf::RenderWindow& window) {
+      for (auto& car : cars) {
+          window.draw(car.shape);
+      }
+  }
+};
+
+Lane* findLaneWithMostCars(const std::vector<Lane*>& lanes) {
+    Lane* maxLane = nullptr;
+    int maxCount = 0;
+    for (auto lane : lanes) {
+        int count = lane->cars.size();
+        if (count > maxCount) {
+            maxCount = count;
+            maxLane = lane;
+        }
+    }
+    return maxLane;
+}
+
+// Count how many cars in a group of lanes are stopped
+int countStopped(const std::vector<Lane*>& lanes) {
+    int count = 0;
+    for (auto lane : lanes) {
+        for (auto& car : lane->cars) {
+            if (car.stopped)
+                count++;
+        }
+    }
+    return count;
+}

@@ -1,3 +1,4 @@
 ﻿  traficsim.cpp
-MSVCRT.lib(exe_main.obj) : error LNK2001: unresolved external symbol main
-C:\Users\netra\source\repos\dsa-queue-simulator-final\dsa-queue-simuatorr\x64\Release\dsa-queue-simuatorr.exe : fatal error LNK1120: 1 unresolved externals
+C:\Users\netra\source\repos\dsa-queue-simulator-final\dsa-queue-simuatorr\traficsim.cpp(26,14): error C2601: 'isRed': local function definitions are illegal
+C:\Users\netra\source\repos\dsa-queue-simulator-final\dsa-queue-simuatorr\traficsim.cpp(26,31): error C2065: 'state': undeclared identifier
+C:\Users\netra\source\repos\dsa-queue-simulator-final\dsa-queue-simuatorr\traficsim.cpp(75,12): error C1075: '{': no matching token found
