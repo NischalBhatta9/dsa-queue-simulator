@@ -142,3 +142,34 @@ public:
                     it->stopped = true;
                     break;
                 }
+                // Check for safe distance between cars (for cars going in the same
+       // direction)
+                if ((it->speedX * otherCar.speedX > 0 ||
+                    it->speedY * otherCar.speedY > 0)) {
+                    sf::Vector2f otherPos = otherCar.shape.getPosition();
+                    float distance = 0.0f;
+
+                    // Calculate distance in the direction of movement
+                    if (std::fabs(it->speedX) > 0) { // Horizontal movement
+                        if ((it->speedX > 0 && otherPos.x > carPos.x) ||
+                            (it->speedX < 0 && otherPos.x < carPos.x)) {
+                            distance =
+                                std::fabs(otherPos.x - carPos.x) - it->shape.getSize().x;
+                        }
+                    }
+                    else if (std::fabs(it->speedY) > 0) { // Vertical movement
+                        if ((it->speedY > 0 && otherPos.y > carPos.y) ||
+                            (it->speedY < 0 && otherPos.y < carPos.y)) {
+                            distance =
+                                std::fabs(otherPos.y - carPos.y) - it->shape.getSize().y;
+                        }
+                    }
+
+                    // If cars are too close in the direction of movement, stop
+                    if (distance > 0 && distance < collisionBuffer) {
+                        shouldMove = false;
+                        it->stopped = true;
+                        break;
+                    }
+                }
+            }
