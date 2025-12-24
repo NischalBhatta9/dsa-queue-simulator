@@ -173,3 +173,42 @@ public:
                     }
                 }
             }
+
+            // Traffic light check (only if collision check passed)
+            if (shouldMove && !ignoreTrafficLight && trafficLight->isRed() &&
+                !inRectangularArea) {
+                if (shape.getSize().x > shape.getSize().y) { // Horizontal lane
+                    if (it->speedX > 0) {                      // Car moving right
+                        float carRight = carPos.x + it->shape.getSize().x;
+                        float lightLeft = trafficLight->shape.getPosition().x;
+                        float gap = lightLeft - carRight;
+                        if (gap > 0 && gap < stopThreshold)
+                            shouldMove = false;
+                    }
+                    else if (it->speedX < 0) { // Car moving left
+                        float carLeft = carPos.x;
+                        float lightRight = trafficLight->shape.getPosition().x +
+                            trafficLight->shape.getSize().x;
+                        float gap = carLeft - lightRight;
+                        if (gap > 0 && gap < stopThreshold)
+                            shouldMove = false;
+                    }
+                }
+                else {                // Vertical lane
+                    if (it->speedY > 0) { // Car moving down
+                        float carBottom = carPos.y + it->shape.getSize().y;
+                        float lightTop = trafficLight->shape.getPosition().y;
+                        float gap = lightTop - carBottom;
+                        if (gap > 0 && gap < stopThreshold)
+                            shouldMove = false;
+                    }
+                    else if (it->speedY < 0) { // Car moving up
+                        float carTop = carPos.y;
+                        float lightBottom = trafficLight->shape.getPosition().y +
+                            trafficLight->shape.getSize().y;
+                        float gap = carTop - lightBottom;
+                        if (gap > 0 && gap < stopThreshold)
+                            shouldMove = false;
+                    }
+                }
+            }
