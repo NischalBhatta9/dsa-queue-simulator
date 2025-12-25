@@ -391,3 +391,116 @@ int main() {
     TrafficLight trafficLight2(325, 250, 25, 120); // Left side
     TrafficLight trafficLight3(350, 225, 120, 25); // Top side
     TrafficLight trafficLight4(350, 370, 120, 25); // Bottom side
+
+    // Create lanes
+    // Horizontal lanes: left side (trafficLight2) and right side (trafficLight1)
+    Lane lane1(100, 260, 250, 20, sf::Color::White, sf::Color(125, 5, 82),
+        &trafficLight2, true, true); // left priority lane
+    Lane lane2(100, 290, 250, 40, sf::Color::White, sf::Color(125, 5, 82),
+        &trafficLight2);
+    Lane lane3(100, 340, 250, 20, sf::Color::White, sf::Color(125, 5, 82),
+        &trafficLight2);
+    Lane lane7(470, 260, 250, 20, sf::Color::White, sf::Color(210, 145, 188),
+        &trafficLight1); // right
+    Lane lane8(470, 290, 250, 40, sf::Color::White, sf::Color(210, 145, 188),
+        &trafficLight1);
+    Lane lane9(470, 340, 250, 20, sf::Color::White, sf::Color(210, 145, 188),
+        &trafficLight1, true);
+    Lane lane4(360, 000, 20, 250, sf::Color::White, sf::Color::Blue,
+        &trafficLight3); // top
+    Lane lane5(390, 000, 40, 250, sf::Color::White, sf::Color::Blue,
+        &trafficLight3);
+    Lane lane6(440, 000, 20, 250, sf::Color::White, sf::Color::Blue,
+        &trafficLight3, true);
+    Lane lane10(440, 370, 20, 250, sf::Color::White, sf::Color::Black,
+        &trafficLight4, true, true); // bottom priority lane
+    Lane lane11(390, 370, 40, 250, sf::Color::White, sf::Color::Black,
+        &trafficLight4);
+    Lane lane12(360, 370, 20, 250, sf::Color::White, sf::Color::Black,
+        &trafficLight4, true);
+
+    // Group lanes by side for priority checking.
+    std::vector<Lane*> leftLanes = { &lane1, &lane2, &lane3 };
+    std::vector<Lane*> rightLanes = { &lane7, &lane8, &lane9 };
+    std::vector<Lane*> topLanes = { &lane4, &lane5, &lane6 };
+    std::vector<Lane*> bottomLanes = { &lane10, &lane11, &lane12 };
+
+    // Create a vector of all lanes to simplify operations
+    std::vector<Lane*> allLanes = { &lane1, &lane2,  &lane3,  &lane4,
+                                    &lane5, &lane6,  &lane7,  &lane8,
+                                    &lane9, &lane10, &lane11, &lane12 };
+
+    Side currentPriority = Side::NONE;
+    Lane* currentLane = nullptr;
+
+    // Timing variables
+    float greenTimer = 0.0f;
+    float greenDuration = 0.0f;
+    const float frameTime = 1.0f / 300.0f; // Based on framerate limit
+
+    std::srand(std::time(nullptr));
+
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window.close();
+            if (event.type == sf::Event::KeyPressed &&
+                event.key.code == sf::Keyboard::Q)
+                window.close();
+        }
+
+        // Spawn cars randomly (2% chance per frame)
+        if (std::rand() % 100 < 2) {
+            int side = std::rand() % 4;
+            if (side == 0) { // Left side
+                float laneY = 260 + (std::rand() % 3) * 30;
+                if (laneY == 260)
+                    lane1.addCar(Car(100, laneY, 20, 20, 0.5f, 0.0f, false, false));
+                else if (laneY == 290) {
+                    int whichLane = std::rand() % 2;
+                    if (whichLane == 0)
+                        lane2.addCar(Car(100, laneY, 20, 20, 0.5f, 0.0f, true, false));
+                    else
+                        lane2.addCar(Car(100, laneY, 20, 20, 0.5f, 0.0f, false, true));
+                }
+            }
+            else if (side == 1) { // Right side
+                float laneY = 280 + (std::rand() % 3) * 30;
+                if (laneY == 340)
+                    lane9.addCar(Car(700, laneY, 20, 20, -0.5f, 0.0f, false, false));
+                else if (laneY == 310) {
+                    int whichLane = std::rand() % 2;
+                    if (whichLane == 0)
+                        lane8.addCar(Car(700, laneY, 20, 20, -0.5f, 0.0f, true, false));
+                    else
+                        lane8.addCar(Car(700, laneY, 20, 20, -0.5f, 0.0f, false, true));
+                }
+            }
+            else if (side == 2) { // Top side
+                float laneX = 380 + (std::rand() % 3) * 30;
+                if (laneX == 410) {
+                    int whichLane = std::rand() % 2;
+                    if (whichLane == 0)
+                        lane5.addCar(Car(laneX, 000, 20, 20, 0.0f, 0.5f, true, false));
+                    else
+                        lane5.addCar(Car(laneX, 000, 20, 20, 0.0f, 0.5f, false, true));
+                }
+                else if (laneX == 440) {
+                    lane6.addCar(Car(laneX, 000, 20, 20, 0.0f, 0.5f, false, false));
+                }
+            }
+            else if (side == 3) { // Bottom side
+                float laneX = 360 + (std::rand() % 3) * 30;
+                if (laneX == 390) {
+                    int whichLane = std::rand() % 2;
+                    if (whichLane == 0)
+                        lane11.addCar(Car(laneX, 600, 20, 20, 0.0f, -0.5f, true, false));
+                    else
+                        lane11.addCar(Car(laneX, 600, 20, 20, 0.0f, -0.5f, false, true));
+                }
+                else if (laneX == 360) {
+                    lane12.addCar(Car(laneX, 600, 20, 20, 0.0f, -0.5f, false, false));
+                }
+            }
+        }
