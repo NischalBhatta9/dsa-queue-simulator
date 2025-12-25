@@ -320,3 +320,74 @@ int countStopped(const std::vector<Lane*>& lanes) {
     }
     return count;
 }
+// Calculate total waiting vehicles for a group of lanes
+int calculateTotalWaiting(const std::vector<Lane*>& lanes) {
+    int total = 0;
+    for (auto lane : lanes) {
+        if (!lane->isPriority) { // Only count normal lanes
+            total += lane->waitingVehicles;
+        }
+    }
+    return total;
+}
+
+// Calculate green light duration based on waiting vehicles
+float calculateGreenDuration(const std::vector<Lane*>& allLanes,
+    const std::vector<Lane*>& activeLanes) {
+    int totalNormalLanes = 0;
+    int totalWaitingVehicles = 0;
+
+    // Count normal lanes and their waiting vehicles
+    for (auto lane : allLanes) {
+        if (!lane->isPriority) {
+            totalNormalLanes++;
+            totalWaitingVehicles += lane->waitingVehicles;
+        }
+    }
+
+    if (totalNormalLanes == 0)
+        return 5.0f; // Default duration if no normal lanes
+
+    // Calculate |V| according to the formula: |V| = 1/n * sum(Li)
+    float vehiclesToServe = (float)totalWaitingVehicles / totalNormalLanes;
+
+    // Calculate time: Total time = |V| * t
+    // Assuming t = 1.0 second per vehicle
+    const float timePerVehicle = 1.0f;
+    return std::max(3.0f, vehiclesToServe * timePerVehicle); // Minimum 3 seconds
+}
+
+// Check if any car intersects a given region
+bool anyCarInRegion(const std::vector<Lane*>& lanes,
+    const sf::FloatRect& region) {
+    for (auto lane : lanes) {
+        for (auto& car : lane->cars) {
+            if (car.shape.getGlobalBounds().intersects(region))
+                return true;
+        }
+    }
+    return false;
+}
+
+int main() {
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Traffic Light Simulator");
+    window.setFramerateLimit(300);
+
+    sf::Font font;
+    if (!font.loadFromFile(
+        "/usr/share/fonts/abattis-cantarell-fonts/Cantarell-Light.otf")) {
+        std::cerr << "Error loading font\n";
+        return -1;
+    }
+
+    // Create roads
+    Road roadA(100, 250, 400, 120);
+    Road roadB(470, 250, 250, 120);
+    Road roadC(350, 000, 120, 400);
+    Road roadD(350, 370, 120, 400);
+
+    // Create traffic lights (we control their states via priority check)
+    TrafficLight trafficLight1(470, 250, 25, 120); // Right side
+    TrafficLight trafficLight2(325, 250, 25, 120); // Left side
+    TrafficLight trafficLight3(350, 225, 120, 25); // Top side
+    TrafficLight trafficLight4(350, 370, 120, 25); // Bottom side
