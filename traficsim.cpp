@@ -504,3 +504,21 @@ int main() {
                 }
             }
         }
+        // Update waiting counts for all lanes
+        for (auto lane : allLanes) {
+            lane->updateWaitingCount();
+        }
+
+        // Update cars in all lanes
+        for (auto lane : allLanes) {
+            lane->updateCars();
+        }
+
+        // Timer logic for green light duration
+        if (currentPriority != Side::NONE) {
+            greenTimer += frameTime;
+            if (greenTimer >= greenDuration) {
+                currentPriority = Side::NONE;
+                greenTimer = 0.0f;
+            }
+        }
