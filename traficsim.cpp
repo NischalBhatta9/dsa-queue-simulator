@@ -572,3 +572,60 @@ int main() {
                     lightBounds.top + lightBounds.height) -
                 extendedRegion.top;
         }
+        // If a priority lane needs service and no current priority, give it
+ // priority
+        if (currentPriority == Side::NONE && priorityLane != nullptr) {
+            if (priorityLane == &lane1 || priorityLane == &lane2 ||
+                priorityLane == &lane3) {
+                currentPriority = Side::LEFT;
+                greenDuration = calculateGreenDuration(allLanes, leftLanes);
+            }
+            else if (priorityLane == &lane7 || priorityLane == &lane8 ||
+                priorityLane == &lane9) {
+                currentPriority = Side::RIGHT;
+                greenDuration = calculateGreenDuration(allLanes, rightLanes);
+            }
+            else if (priorityLane == &lane4 || priorityLane == &lane5 ||
+                priorityLane == &lane6) {
+                currentPriority = Side::TOP;
+                greenDuration = calculateGreenDuration(allLanes, topLanes);
+            }
+            else if (priorityLane == &lane10 || priorityLane == &lane11 ||
+                priorityLane == &lane12) {
+                currentPriority = Side::BOTTOM;
+                greenDuration = calculateGreenDuration(allLanes, bottomLanes);
+            }
+            greenTimer = 0.0f;
+        }
+
+        // If no priority is set, find the lane group with the highest total waiting
+        // vehicles
+        if (currentPriority == Side::NONE) {
+            int leftTotal = calculateTotalWaiting(leftLanes);
+            int rightTotal = calculateTotalWaiting(rightLanes);
+            int topTotal = calculateTotalWaiting(topLanes);
+            int bottomTotal = calculateTotalWaiting(bottomLanes);
+
+            // Find the direction with the highest waiting vehicles
+            int maxTotal = std::max({ leftTotal, rightTotal, topTotal, bottomTotal });
+
+            if (maxTotal > 0) {
+                if (maxTotal == leftTotal) {
+                    currentPriority = Side::LEFT;
+                    greenDuration = calculateGreenDuration(allLanes, leftLanes);
+                }
+                else if (maxTotal == rightTotal) {
+                    currentPriority = Side::RIGHT;
+                    greenDuration = calculateGreenDuration(allLanes, rightLanes);
+                }
+                else if (maxTotal == topTotal) {
+                    currentPriority = Side::TOP;
+                    greenDuration = calculateGreenDuration(allLanes, topLanes);
+                }
+                else {
+                    currentPriority = Side::BOTTOM;
+                    greenDuration = calculateGreenDuration(allLanes, bottomLanes);
+                }
+                greenTimer = 0.0f;
+            }
+        }
