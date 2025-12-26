@@ -629,3 +629,69 @@ int main() {
                 greenTimer = 0.0f;
             }
         }
+        // If still no priority is set, use the original method to find lane with
+        // most cars
+        if (currentPriority == Side::NONE) {
+            if (currentLane == nullptr || currentLane->cars.size() == 0) {
+                currentLane = findLaneWithMostCars(allLanes);
+            }
+
+            if (currentLane != nullptr) {
+                if (std::find(leftLanes.begin(), leftLanes.end(), currentLane) !=
+                    leftLanes.end()) {
+                    currentPriority = Side::LEFT;
+                    greenDuration = 5.0f; // Default duration
+                }
+                else if (std::find(rightLanes.begin(), rightLanes.end(),
+                    currentLane) != rightLanes.end()) {
+                    currentPriority = Side::RIGHT;
+                    greenDuration = 5.0f; // Default duration
+                }
+                else if (std::find(topLanes.begin(), topLanes.end(), currentLane) !=
+                    topLanes.end()) {
+                    currentPriority = Side::TOP;
+                    greenDuration = 5.0f; // Default duration
+                }
+                else if (std::find(bottomLanes.begin(), bottomLanes.end(),
+                    currentLane) != bottomLanes.end()) {
+                    currentPriority = Side::BOTTOM;
+                    greenDuration = 5.0f; // Default duration
+                }
+                greenTimer = 0.0f;
+            }
+        }
+
+        // Force only one light green at a time according to current priority.
+        {
+            std::lock_guard<std::mutex> lock(lightMutex);
+            if (currentPriority == Side::LEFT) {
+                trafficLight2.state = 1;
+                trafficLight1.state = 0;
+                trafficLight3.state = 0;
+                trafficLight4.state = 0;
+            }
+            else if (currentPriority == Side::RIGHT) {
+                trafficLight1.state = 1;
+                trafficLight2.state = 0;
+                trafficLight3.state = 0;
+                trafficLight4.state = 0;
+            }
+            else if (currentPriority == Side::TOP) {
+                trafficLight3.state = 1;
+                trafficLight1.state = 0;
+                trafficLight2.state = 0;
+                trafficLight4.state = 0;
+            }
+            else if (currentPriority == Side::BOTTOM) {
+                trafficLight4.state = 1;
+                trafficLight1.state = 0;
+                trafficLight2.state = 0;
+                trafficLight3.state = 0;
+            }
+            else {
+                // Default: all red.
+                trafficLight1.state = 0;
+                trafficLight2.state = 0;
+                trafficLight3.state = 0;
+                trafficLight4.state = 0;
+            }
