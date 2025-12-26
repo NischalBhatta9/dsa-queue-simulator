@@ -522,3 +522,53 @@ int main() {
                 greenTimer = 0.0f;
             }
         }
+
+        // === PRIORITY CHECK ===
+        // Define the base intersection region where cars are considered waiting.
+        sf::FloatRect intersectionRegion(350, 250, 100, 100);
+
+        // Check for priority lanes with more than 5 waiting vehicles
+        Lane* priorityLane = nullptr;
+        for (auto lane : allLanes) {
+            if (lane->isPriority && lane->waitingVehicles > 5) {
+                priorityLane = lane;
+                break;
+            }
+        }
+
+        // Determine active traffic light and lanes based on current priority.
+        TrafficLight* activeTrafficLight = nullptr;
+        std::vector<Lane*>* activeLanes = nullptr;
+        if (currentPriority == Side::LEFT) {
+            activeTrafficLight = &trafficLight2;
+            activeLanes = &leftLanes;
+        }
+        else if (currentPriority == Side::RIGHT) {
+            activeTrafficLight = &trafficLight1;
+            activeLanes = &rightLanes;
+        }
+        else if (currentPriority == Side::TOP) {
+            activeTrafficLight = &trafficLight3;
+            activeLanes = &topLanes;
+        }
+        else if (currentPriority == Side::BOTTOM) {
+            activeTrafficLight = &trafficLight4;
+            activeLanes = &bottomLanes;
+        }
+
+        // Compute the extended region as the union of the base intersection
+        // region and the active traffic light's bounds.
+        sf::FloatRect extendedRegion = intersectionRegion;
+        if (activeTrafficLight != nullptr) {
+            sf::FloatRect lightBounds = activeTrafficLight->shape.getGlobalBounds();
+            extendedRegion.left = std::min(intersectionRegion.left, lightBounds.left);
+            extendedRegion.top = std::min(intersectionRegion.top, lightBounds.top);
+            extendedRegion.width =
+                std::max(intersectionRegion.left + intersectionRegion.width,
+                    lightBounds.left + lightBounds.width) -
+                extendedRegion.left;
+            extendedRegion.height =
+                std::max(intersectionRegion.top + intersectionRegion.height,
+                    lightBounds.top + lightBounds.height) -
+                extendedRegion.top;
+        }
