@@ -694,4 +694,14 @@ int main() {
                 trafficLight2.state = 0;
                 trafficLight3.state = 0;
                 trafficLight4.state = 0;
-            }
+            }   
+            // Update the fill colors.
+            trafficLight1.shape.setFillColor(
+                trafficLight1.colors[trafficLight1.state]);
+            trafficLight2.shape.setFillColor(
+                trafficLight2.colors[trafficLight2.state]);
+            trafficLight3.shape.setFillColor(
+                trafficLight3.colors[trafficLight3.state]);
+            trafficLight4.shape.setFillColor(
+                trafficLight4.colors[trafficLight4.state]);
+        }
